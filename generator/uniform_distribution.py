@@ -10,7 +10,6 @@ def lehmer(a, m, R0):
         x_i = R_curr / m
         R_prev = R_curr
         if x_i in x:
-            print(x_i)
             break
         else:
             x.append(x_i)
