@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 from generator import uniform_distribution
-from math import pi
+import numpy as np
 
 
 def hist(x, bins=20):
-    plt.hist(x, bins=bins, ec='black', density=True)
+    # weights are for frequencies on Y-axis
+    weights = np.ones_like(x) / len(x)
+    plt.hist(x, bins=bins, ec='black', weights=weights)
+    plt.plot([0, 1], [1/bins]*2, color='red')
     plt.show()
 
 
@@ -25,7 +28,6 @@ def standard_deviation(x):
 def indirect_signs_check(x):
     n = len(x) if (len(x) % 2 == 0) else (len(x) - 1)
     k = 0
-    # x_list = list(x)
     for i in range(0, n-1, 2):
         if x[i]**2 + x[i+1]**2 < 1:
             k += 1
