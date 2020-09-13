@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
+from generator import uniform_distribution
 from math import pi
 
 
 def hist(x, bins=20):
-    plt.hist(x, bins=bins, ec='black')
+    plt.hist(x, bins=bins, ec='black', density=True)
     plt.show()
 
 
@@ -21,14 +22,31 @@ def standard_deviation(x):
     return dispersion(x)**(1/2)
 
 
-def indirect_signs_check(x, error):
+def indirect_signs_check(x):
     n = len(x) if (len(x) % 2 == 0) else (len(x) - 1)
     k = 0
+    # x_list = list(x)
     for i in range(0, n-1, 2):
         if x[i]**2 + x[i+1]**2 < 1:
             k += 1
 
-    if 2*k/n - pi/4 < error:
-        return True
-    return False
+    return 2*k/n
+
+
+def find_parameters(lower_limit=50000):
+    a = 3
+    m = 5
+    R0 = 1
+    offset = 9
+    coef = 10
+    period = uniform_distribution.lehmer(a, m, R0)[1]
+    iteration = 1_000
+    while (period < lower_limit) and (iteration != 0):
+        a = a*coef + offset
+        m = m*coef + offset
+        R0 = R0*coef + offset
+        period = uniform_distribution.lehmer(a, m, R0)[1]
+        iteration -= 1
+
+    return a, m, R0
 

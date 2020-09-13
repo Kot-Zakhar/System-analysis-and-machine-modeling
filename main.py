@@ -1,18 +1,45 @@
 from generator import uniform_distribution
 import evaluator
+from math import pi
+
+
+def get_statistics(x, P):
+    M = evaluator.math_expectation(x)
+    D = evaluator.dispersion(x)
+    sigma = evaluator.standard_deviation(x)
+    k2_on_4 = evaluator.indirect_signs_check(x)
+    L = len(x)
+
+    return "\n".join([
+        f'M: {M}',
+        f'D: {D}',
+        f'σ: {sigma}',
+        f'2K/4: {k2_on_4}',
+        f'pi/4: {pi/4}',
+        f'L: {L}',
+        f'P: {P}'
+    ])
+
+
+def process(a, m, R0):
+    x, period = uniform_distribution.lehmer(a=a, m=m, R0=R0)
+    out_x = x[: 20] if len(x) > 20 else x
+    print(f'X:', *out_x)
+    print(get_statistics(x, period))
+    evaluator.hist(x, bins=20)
 
 
 if __name__ == '__main__':
-    # a = int(input('a: '))
-    # m = int(input('m: '))
-    # R0 = int(input('R0: '))
-    # x = uniform_distribution.lehmer(a=3, m=5, R0=1)
-    x = uniform_distribution.lehmer(a=5, m=4096, R0=2451)
-    # x = uniform_distribution.lehmer(a=9, m=113, R0=42)
-    print(len(x))
-    print('m:', evaluator.math_expectation(x))
-    print('D:', evaluator.dispersion(x))
-    print('σ:', evaluator.standard_deviation(x))
-    evaluator.hist(x, bins=20)
-    print(evaluator.indirect_signs_check(x, 0.01))
+    a = int(input('a: '))
+    m = int(input('m: '))
+    R0 = int(input('R0: '))
+    # a, m, R0 = 3, 5, 1
+    process(a=a, m=m, R0=R0)
+    print()
+    a, m, R0 = evaluator.find_parameters()
+    print(f'a: {a}\nm: {m}\nR0: {R0}')
+    process(a=a, m=m, R0=R0)
+
+
+
 
