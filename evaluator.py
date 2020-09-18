@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from generator import uniform_distribution
+import generator
 import numpy as np
 
 
@@ -41,13 +41,13 @@ def find_parameters(lower_limit=50000):
     R0 = 1
     offset = 9
     coef = 10
-    period = uniform_distribution.lehmer(a, m, R0)[1]
+    period = generator.lehmer(a, m, R0)[1]
     iteration = 1_000
     while (period < lower_limit) and (iteration != 0):
         a = a*coef + offset
         m = m*coef + offset
         R0 = R0*coef + offset
-        period = uniform_distribution.lehmer(a, m, R0)[1]
+        period = generator.lehmer(a, m, R0)[1]
         iteration -= 1
 
     return a, m, R0

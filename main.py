@@ -1,4 +1,4 @@
-from generator import uniform_distribution
+import generator
 import evaluator
 from math import pi
 
@@ -22,13 +22,15 @@ def get_statistics(x, P):
 
 
 def process(a, m, R0):
-    x, period = uniform_distribution.lehmer(a=a, m=m, R0=R0)
+    x, period = generator.lehmer(a=a, m=m, R0=R0)
     out_x = x[: 20] if len(x) > 20 else x
     print(f'X:', *out_x)
     print(get_statistics(x, period))
     evaluator.hist(x, bins=20)
 
-
+# 39999
+# m: 59999
+# R0: 19999
 if __name__ == '__main__':
     a = int(input('a: '))
     m = int(input('m: '))
