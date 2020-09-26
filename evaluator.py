@@ -3,11 +3,18 @@ import generator
 import numpy as np
 
 
+ACCURACY = 3
+
+
 def hist(x, bins=20):
     # weights are for frequencies on Y-axis
     weights = np.ones_like(x) / len(x)
     plt.hist(x, bins=bins, ec='black', weights=weights)
-    plt.plot([0, 1], [1/bins]*2, color='red')
+    M = round(math_expectation(x), ACCURACY)
+    D = round(dispersion(x), ACCURACY)
+    sigma = round(standard_deviation(x), ACCURACY)
+    plt.title(f'M: {M} | D: {D} | σ: {sigma}')
+    # plt.plot([min(x)-1, max(x)+1], [1/bins]*2, color='red')
     plt.show()
 
 
