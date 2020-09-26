@@ -28,7 +28,7 @@ def process(dist_dict, chosen_dist):
     params_dict = {}
     print("Input parameters.")
     for parameter in params:
-        params_dict[parameter] = int(input(f'{parameter}: '))
+        params_dict[parameter] = float(input(f'{parameter}: '))
 
     params_dict.update(LEHMER_PARAMS)
     x = generate_distribution(**params_dict)

@@ -22,6 +22,13 @@ def lehmer(a, m, R0):
 
 
 def uniform_distribution(**kwargs):
+    """Функция возвращает равномерно распределенную случайну величину.
+
+    :param kwargs:
+        a - левая граница отрезка.
+        b - правая граница отрезка.
+    :return: равномерно распределенный X в отрезке [a, b].
+    """
 
     def uniform_kernel(a, b, R):
         return a + (b - a)*R
@@ -33,6 +40,13 @@ def uniform_distribution(**kwargs):
 
 
 def normal_distribution(**kwargs):
+    """Функция возвращает нормально распределенную случайну величину.
+
+    :param kwargs:
+        m - математическое ожидание.
+        σ - среднеквадратическое отклонение.
+    :return: нормально распределенный X.
+    """
 
     def normal_kernel(m, sigma, Ri_sum, n):
         return m + sigma * (Ri_sum - n/2) * ((12/n)**(1/2))
@@ -45,6 +59,13 @@ def normal_distribution(**kwargs):
 
 
 def exponential_distribution(**kwargs):
+    """Функция возвращает равномерно распределенную случайну величину.
+
+    :param kwargs:
+        λ - интенсивность или обратный коэффициент масштаба.
+        (чем больше, тем круче график и смещеннее левее)
+    :return: экспоненциально распределенный X.
+    """
 
     def exp_kernel(lmbd, R):
         return -(1/lmbd) * log(R)
@@ -55,29 +76,52 @@ def exponential_distribution(**kwargs):
 
 
 def gamma_distribution(**kwargs):
+    """Функция возвращает случайну величину распределенную по гамма распределению.
+
+    :param kwargs:
+        λ - параметр формы
+        η - параметр масштаба (параметер скорости?)
+    :return: гамма распределенный X.
+    """
 
     def gamma_kernel(lmbd, R):
         return -1/lmbd * sum(map(log, R))
 
     lmbd = kwargs['λ']
-    eta = kwargs['η']
+    eta = round(kwargs['η'])
     R = lehmer(a=kwargs['A'], m=kwargs['M'], R0=kwargs['R0'])
     return [gamma_kernel(lmbd, R[i-eta: i]) for i in range(eta, len(R), eta)]
 
 
 def triangular_distribution(**kwargs):
+    """Функция возвращает треугольно распределенную случайную величину.
+
+    :param kwargs:
+        a - левая граница
+        b - правая граница
+    :return: треугольно распределенный X.
+    """
 
     def triangular_kernel(a, b, R1, R2):
         return a + (b-a)*min(R1, R2)
 
     a = kwargs['a']
     b = kwargs['b']
-    R = lehmer(a=kwargs['A'], m=kwargs['M'], R0=kwargs['R0'])
-    np.random.shuffle(R)
-    return [triangular_kernel(a, b, R[i-1], R[i]) for i in range(1, len(R), 2)]
+    R1 = lehmer(a=kwargs['A'], m=kwargs['M'], R0=kwargs['R0'])
+    np.random.shuffle(R1)
+    R2 = lehmer(a=kwargs['A'], m=kwargs['M'], R0=kwargs['R0'])
+    np.random.shuffle(R2)
+    return [triangular_kernel(a, b, R1[i], R2[i]) for i in range(len(R1))]
 
 
 def simpson_distribution(**kwargs):
+    """Функция возвращает распределенную по симпсону случайную величину.
+
+    :param kwargs:
+        a - левая граница
+        b - правая граница
+    :return: распределенный по симпсону X.
+    """
 
     def simpson_kernel(y, z):
         return y + z
@@ -92,15 +136,6 @@ def simpson_distribution(**kwargs):
 
 
 if __name__ == '__main__':
-    # A 39999
-    # m: 59999
-    # R0: 19999
     A = 39999
     M = 59999
     R0 = 19999
-    # print(uniform_distribution(1, 10, A=a, M=m, R0=R0)[0:20])
-    # print(normal_distribution(3, 3, A=a, M=m, R0=R0)[0:20])
-    # print(exponential_distribution(3, A=a, M=m, R0=R0)[0:20])
-    # print(gamma_distribution(3, 10, A=a, M=m, R0=R0)[0:20])
-    # print(triangular_distribution(3, 10, A=a, M=m, R0=R0)[0:20])
-    # print(simpson_distribution(3, 10, A=a, M=m, R0=R0)[0:20])
