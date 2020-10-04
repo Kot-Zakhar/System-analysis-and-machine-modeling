@@ -3,44 +3,90 @@ import evaluator
 from math import pi
 
 
-def get_statistics(x, P):
+LEHMER_PARAMS = {
+    'A': 39999,
+    'M': 59999,
+    'R0': 19999
+}
+
+
+def get_statistics(x):
     M = evaluator.math_expectation(x)
     D = evaluator.dispersion(x)
     sigma = evaluator.standard_deviation(x)
-    k2_on_4 = evaluator.indirect_signs_check(x)
-    L = len(x)
 
     return "\n".join([
         f'M: {M}',
         f'D: {D}',
-        f'σ: {sigma}',
-        f'2K/4: {k2_on_4}',
-        f'pi/4: {pi/4}',
-        f'L: {L}',
-        f'P: {P}'
+        f'σ: {sigma}'
     ])
 
 
-def process(a, m, R0):
-    x, period = generator.lehmer(a=a, m=m, R0=R0)
+def process(dist_dict, chosen_dist):
+    generate_distribution = dist_dict[chosen_dist]['generator']
+    params = dist_dict[chosen_dist]['params']
+    params_dict = {}
+    print("Input parameters.")
+    for parameter in params:
+        params_dict[parameter] = float(input(f'{parameter}: '))
+
+    params_dict.update(LEHMER_PARAMS)
+    x = generate_distribution(**params_dict)
     out_x = x[: 20] if len(x) > 20 else x
     print(f'X:', *out_x)
-    print(get_statistics(x, period))
+    print(get_statistics(x))
     evaluator.hist(x, bins=20)
 
-# 39999
-# m: 59999
-# R0: 19999
+
+def get_distribution_dict():
+    return {
+        "uniform": {
+            'generator': generator.uniform_distribution,
+            'params': ['a', 'b']
+        },
+        "normal": {
+            'generator': generator.normal_distribution,
+            'params': ['m', 'σ']
+        },
+        "exponential": {
+            'generator': generator.exponential_distribution,
+            'params': ['λ']
+        },
+        "gamma": {
+            'generator': generator.gamma_distribution,
+            'params': ['λ', 'η']
+        },
+        "triangular": {
+            'generator': generator.triangular_distribution,
+            'params': ['a', 'b']
+        },
+        "simpson": {
+            'generator': generator.simpson_distribution,
+            'params': ['a', 'b']
+        }
+    }
+
+
+def main():
+    dist_dict = get_distribution_dict()
+    dists = list(dist_dict.keys())
+    while True:
+        for i in range(len(dists)):
+            print(f"{i+1}. {dists[i]};")
+        exit_option = len(dists) + 1
+        print("----------------")
+        print(f"{exit_option}. exit.")
+        option = int(input("Select the distribution: "))
+        if option == exit_option:
+            break
+        if (option <= len(dists)) and (option > 0):
+            process(dist_dict=dist_dict, chosen_dist=dists[option-1])
+
+
 if __name__ == '__main__':
-    a = int(input('a: '))
-    m = int(input('m: '))
-    R0 = int(input('R0: '))
-    # a, m, R0 = 3, 5, 1
-    process(a=a, m=m, R0=R0)
-    print()
-    a, m, R0 = evaluator.find_parameters()
-    print(f'a: {a}\nm: {m}\nR0: {R0}')
-    process(a=a, m=m, R0=R0)
+    main()
+
+
 
 
 
